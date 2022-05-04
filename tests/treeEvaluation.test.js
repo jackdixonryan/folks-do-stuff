@@ -13,34 +13,15 @@ describe("The Evaluation of Executable Trees", () => {
 
   test("A method's executable function is run from the tree, with an execute property.", () => {
     const tree = new Tree();
-    const rootNodeId = tree.addNode({ 
-      data: { 
-        description: "Evaluates whether the creature is hungry or not.",
-        main(context) {
-          if (!context) {
-            throw new Error("NO_CONTEXT");
-          } else {
-            const { hunger } = context;
-            if (hunger > 100) {
-              return "Yes"
-            } else {
-              return "No"
-            }
-          }
-        }
-      }
-    });
-
     expect(tree).toHaveProperty("executeNode");
-
   });
 
   test("Any node with an executable function requires a context read during invocation.", () => {
     const context = { 
       hunger: 100,
     }
-    const tree = new Tree(context);
-    const rootNodeId = tree.addNode({ 
+
+    const rootNode = new Node({
       data: { 
         description: "Evaluates whether the creature is hungry or not.",
         main(context) {
@@ -58,10 +39,11 @@ describe("The Evaluation of Executable Trees", () => {
       }
     });
 
+    const tree = new Tree(context);
+    const rootNodeId = tree.addNode(rootNode);
     expect(() => { tree.executeNode(rootNodeId) }).not.toThrow("NO_CONTEXT");
     const result = tree.executeNode(rootNodeId);
     expect(result).toBe("No");
-
   });
 
   // next and most important: node traversal. This is a tough one. 
@@ -78,8 +60,9 @@ describe("The Evaluation of Executable Trees", () => {
   test("An evaluable tree can fetch its root node.", () => {
     const tree = new Tree();
     expect(tree).toHaveProperty("getRootNode");
-    const rootNodeId = tree.addNode();
-    const rootNode = tree.getRootNode();
+    const rootNode = new Node();
+    tree.addNode(rootNode);
+    const rootNodeId = tree.getRootNode().id;
     expect(rootNode.id).toBe(rootNodeId);
   });
 
@@ -88,9 +71,7 @@ describe("The Evaluation of Executable Trees", () => {
       hunger: 100,
     }
     const tree = new Tree(context);
-    // this is an example of a relatively invalid node, but the code should interpret it as a terminal node as it fails to return.
-    // this is implicit typing though; we should also throw an error if a node that appears terminal has children.
-    const rootNodeId = tree.addNode({ 
+    const rootNode = new Node({ 
       data: { 
         description: "Evaluates whether the creature is hungry or not.",
         main(context) {
@@ -106,8 +87,10 @@ describe("The Evaluation of Executable Trees", () => {
           }
         }
       }
-    });
-
+    })
+    // this is an example of a relatively invalid node, but the code should interpret it as a terminal node as it fails to return.
+    // this is implicit typing though; we should also throw an error if a node that appears terminal has children.
+    tree.addNode(rootNode);
     const result = tree.evaluate();
     expect(result).toBe("No");
   });
@@ -117,9 +100,7 @@ describe("The Evaluation of Executable Trees", () => {
       hunger: 100,
     }
     const tree = new Tree(context);
-    // this is an example of a relatively invalid node, but the code should interpret it as a terminal node as it fails to return.
-    // this is implicit typing though; we should also throw an error if a node that appears terminal has children.
-    const rootNodeId = tree.addNode({ 
+    const rootNode = new Node({ 
       data: { 
         description: "Evaluates whether the creature is hungry or not.",
         main(context) {
@@ -136,9 +117,8 @@ describe("The Evaluation of Executable Trees", () => {
         }
       }
     });
-
-    const secondNodeId = tree.addNode({ 
-      parentId: rootNodeId,
+    const secondNode = new Node({ 
+      parentId: rootNode.id,
       data: {
         description: "Evaluates whether the creature is thirsty or not.",
         main(context) {
@@ -154,7 +134,11 @@ describe("The Evaluation of Executable Trees", () => {
           }
         }
       }
-    });
+    })
+    // this is an example of a relatively invalid node, but the code should interpret it as a terminal node as it fails to return.
+    // this is implicit typing though; we should also throw an error if a node that appears terminal has children.
+    tree.addNode(rootNode);
+    tree.addNode(secondNode);
 
     expect(() => { tree.evaluate() }).toThrow("INVALID_TERMINAL_NODE");
 
