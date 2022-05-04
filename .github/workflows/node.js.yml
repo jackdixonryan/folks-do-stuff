@@ -28,6 +28,10 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      # Finally, run our tests
+      # Then, run our tests
       - name: Run the tests
         run: npm test
+        
+      # Last, regenerate coverage reports. 
+      - name: Regenerate Coverage Readme
+        run: npm run make-badges
