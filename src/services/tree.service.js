@@ -103,6 +103,11 @@ class Node {
   } 
 
   setData(data) {
-    this.data = data;
+    const { main, description } = data;
+    if (!main || !description || typeof description !== "string" || typeof main !== "function") {
+      throw new Error("INVALID_NODE_DATA")
+    } else {
+      this.data = data;
+    }
   }
 }

@@ -106,14 +106,36 @@ describe("The Tree", () => {
     expect(tree.getNode(firstNephew)).not.toBeNull();
   });
 
-  test("Nodes can be given a meaningful value.", () => {
+  test("Data can be passed to a node. The data requires a name, some help text (to contextualize the action for a reader) and some executable code in a main function.", () => {
     const tree = new Tree(); 
-    const rootNodeId = tree.addNode({
-      data: "HUNGER LEVEL"
+    const rootNodeId = tree.addNode({ 
+      data: {
+        description: "Determines actions on hunger level.", 
+        main() { 
+          console.log("I have been declared.");
+        }
+      }
     });
-
+    
     const rootNode = tree.getNode(rootNodeId);
-    expect(rootNode.data).toBe("HUNGER LEVEL");
+    expect(rootNode).toHaveProperty("data");
+    const { data } = rootNode;
+    expect(data).toHaveProperty("description");
+    expect(data).toHaveProperty("main");
+
+    expect(typeof data.main).toBe("function");
+
+    // error handling
+    expect(() => {
+      tree.addNode({
+        parentId: rootNodeId,
+        data: {
+          random: "BS"
+        }
+      });
+    }).toThrow("INVALID_NODE_DATA");
   });
 
+  // now it's time to talke about traversing the node tree.
+  // this entails taking a CONTEXT passed to the tree and passing it into the tree. 
 });
