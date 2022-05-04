@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage --coverageReporters=json-summary",
+    "test": "jest --coverage --coverageReporters=json-summary && npm run make-badges",
     "dev": "nodemon ./src/index.js",
     "make-badges": "istanbul-badges-readme"
   },

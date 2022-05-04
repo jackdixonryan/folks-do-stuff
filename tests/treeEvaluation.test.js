@@ -30,9 +30,9 @@ describe("The Evaluation of Executable Trees", () => {
           } else {
             const { hunger } = context;
             if (hunger > 100) {
-              return "Yes"
+              return { result: "Yes" }
             } else {
-              return "No"
+              return { result: "No" }
             }
           }
         }
@@ -73,16 +73,16 @@ describe("The Evaluation of Executable Trees", () => {
     const tree = new Tree(context);
     const rootNode = new Node({ 
       data: { 
-        description: "Evaluates whether the creature is hungry or not.",
+        description: "Returns yes or no.",
         main(context) {
           if (!context) {
             throw new Error("NO_CONTEXT");
           } else {
             const { hunger } = context;
             if (hunger > 100) {
-              return "Yes"
+              return { result: "Yes" }
             } else {
-              return "No"
+              return { result: "No" }
             }
           }
         }
@@ -95,6 +95,7 @@ describe("The Evaluation of Executable Trees", () => {
     expect(result).toBe("No");
   });
 
+  // this is not true. A node could be both a terminus and an invoker... Maybe...
   test("However, if a node interpreted to be a terminus has children, execution will throw an error.", () => {
     const context = { 
       hunger: 100,
@@ -109,9 +110,9 @@ describe("The Evaluation of Executable Trees", () => {
           } else {
             const { hunger } = context;
             if (hunger > 100) {
-              return "Yes"
+              return { result: "Yes" }
             } else {
-              return "No"
+              return { result: "No" }
             }
           }
         }
@@ -127,9 +128,9 @@ describe("The Evaluation of Executable Trees", () => {
           } else {
             const { thirst } = context;
             if (thirst > 100) {
-              return "THIRSTY";
+              return { result: "THIRSTY" };
             } else {
-              return "NOT_THIRSTY";
+              return { result: "NOT_THIRSTY" };
             }
           }
         }
@@ -141,11 +142,5 @@ describe("The Evaluation of Executable Trees", () => {
     tree.addNode(secondNode);
 
     expect(() => { tree.evaluate() }).toThrow("INVALID_TERMINAL_NODE");
-
-    // but then how the EFF do you specify which subsidiary node to invoke when you add a new... nuts... 
-    // by declaring the nodes external to the node tree, I think, is the only way. 
-    // then they can be added together. 
-
-    // pain in my janes. 
-  })
+  });
 });

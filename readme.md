@@ -3,7 +3,7 @@ Evaluation Trees for Everything.
 
 | Statements                  | Branches                | Functions                 | Lines             |
 | --------------------------- | ----------------------- | ------------------------- | ----------------- |
-| ![Statements](https://img.shields.io/badge/statements-87.17%25-yellow.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-79.06%25-red.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-81.25%25-yellow.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-86.48%25-yellow.svg?style=flat) |
+| ![Statements](https://img.shields.io/badge/statements-87.77%25-yellow.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-81.03%25-yellow.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-82.35%25-yellow.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-87.2%25-yellow.svg?style=flat) |
 
 # Usage 
 ```javascript

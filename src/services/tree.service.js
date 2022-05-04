@@ -62,17 +62,22 @@ class Tree {
     if (!node) {
       throw new Error("NODE_NOT_FOUND");
     } else {
-      // this is pretty sloppy fyi
-      const result = node.execute(this.context); // where result is either a younger process ID or a result.
-      const children = node.children; 
-      if (children.length > 0) {
-         if (!children.includes(result)) { 
-            throw new Error("INVALID_TERMINAL_NODE");
-         } else {
-            const childNode = this.getNode(result);
-            childNode.execute(this.context);
-         }
-      } else {
+      const { nextNodeId, result } = node.execute(this.context);
+      if (nextNodeId) { // indicating that a child node needs to be evaluated 
+        const children = node.children;         
+        if (!node.children || node.children.length === 0) {
+          throw new Error("INVALID_INTERMEDIATE_NODE");
+        } else {
+          if (!children.includes(nextNodeId)) { 
+            throw new Error("INVALID_NEXT_NODE_INVOCATION");
+          } else {
+            return this.executeNode(nextNodeId);
+          }
+        }
+      } else { // indicating we've arrived at a terminal node 
+        if (node.children.length > 0) {
+          throw new Error("INVALID_TERMINAL_NODE");
+        } 
         return result;
       }
     }
@@ -91,11 +96,16 @@ class Tree {
     return this.nodes;
   }
 
-  evaluate() {
+  evaluate(context = null) {
+    if (context) { 
+      this.context = context;
+    }
+
     if (this.getNodeCount() === 0) {
       throw new Error("NO_EVALUABLE_NODES");
     } else {
       const outcome = this.executeNode(this.getRootNode().id);
+      console.log("SITE B");
       return outcome;
     }
   }
@@ -148,9 +158,20 @@ class Node {
     }
   }
 
+  setParentId(parentId) {
+    this.parentId = parentId;
+    this.isRoot = false;
+  }
+
   execute(context) { 
-    const result = this.data.main(context);
-    return result;
+    const { nextNodeId, result } = this.data.main(context);
+    if (!nextNodeId && !result) { 
+      throw new Error("INVALID_NODE_RETURN_VALUES");
+    } else if (result) {
+      return { result };
+    } else {
+      return { nextNodeId };
+    }
   }
 }
 
