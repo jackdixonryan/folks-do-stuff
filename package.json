@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "dev": "nodemon ./src/index.js"
+    "test": "jest --coverage --coverageReporters=json-summary",
+    "dev": "nodemon ./src/index.js",
+    "make-badges": "istanbul-badges-readme"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/jackdixonryan/folks-do-stuff#readme",
   "devDependencies": {
+    "istanbul-badges-readme": "^1.8.1",
     "jest": "^28.0.3"
   }
 }
