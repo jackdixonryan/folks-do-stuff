@@ -1,4 +1,4 @@
-const Tree = require("../src/services/tree.service");
+const { Tree, Node } = require("../src/services/tree.service");
 
 describe("The Tree", () => {
   
@@ -10,16 +10,18 @@ describe("The Tree", () => {
 
   test("You can add nodes to the tree.", () => {
     const tree = new Tree();
-    const nodeId = tree.addNode();
+    const node = new Node();
+    const nodeId = tree.addNode(node);
     expect(typeof nodeId).toBe("string");
     expect(tree.getNodeCount()).toBe(1); 
   });
 
   test("You can retrieve a node with its ID.", () => {
     const tree = new Tree();
-    const nodeId = tree.addNode();
-    const node = tree.getNode(nodeId);
-    expect(node).not.toBeUndefined();
+    const node = new Node();
+    const nodeId = tree.addNode(node);
+    const retrievedNode = tree.getNode(nodeId);
+    expect(retrievedNode).not.toBeUndefined();
   });
 
   test("You receive a null value if you search for a nonexistent node.", () => {
@@ -30,43 +32,64 @@ describe("The Tree", () => {
 
   test("The first node you add is the root node. It has no parent array.", () => {
     const tree = new Tree(); 
-    const nodeId = tree.addNode();
-    const node = tree.getNode(nodeId); 
+    const node = new Node();
+    const nodeId = tree.addNode(node);
+    const rootNode = tree.getNode(nodeId); 
 
-    expect(node.isRoot).toBe(true);
-    expect(node.parents).toBeUndefined();
+    expect(rootNode.isRoot).toBe(true);
+    expect(rootNode.parents).toBeUndefined();
   });
 
   test("All non-root nodes require a parent node.", () => {
     const tree = new Tree(); 
-    const rootNodeId = tree.addNode();
-   
-    expect(() => { tree.addNode({}) }).toThrow("PARENT_REQUIRED");
-    expect(() => { tree.addNode({ parentId: "nonexistentId"}) }).toThrow("PARENT_NOT_FOUND");
+    const rootNode = new Node();
+    const rootNodeId = tree.addNode(rootNode);
+    const invalidNode = new Node();
+    const orphanNode = new Node({
+      parentId: "nonexistent_parent"
+    });
 
-    const validNodeId = tree.addNode({ parentId: rootNodeId });
+    expect(() => { tree.addNode(invalidNode) }).toThrow("PARENT_REQUIRED");
+    expect(() => { tree.addNode(orphanNode) }).toThrow("PARENT_NOT_FOUND");
+
+    const childNode = new Node({
+      parentId: rootNodeId,
+    });
+
+    const validNodeId = tree.addNode(childNode);
     const validNode = tree.getNode(validNodeId);
     expect(validNode.id).not.toBeUndefined();
   });
 
   test("Nodes added after the first node are not considered root nodes.", () => {
     const tree = new Tree(); 
-    const rootNodeID = tree.addNode();
-    const secondNodeId = tree.addNode({ parentId: rootNodeID });
-    const secondNode = tree.getNode(secondNodeId);
+    const rootNode = new Node();
+    const secondNode = new Node({
+      parentId: rootNode.id
+    });
+   
+    tree.addNode(rootNode);
+    const secondNodeId = tree.addNode(secondNode);
+    const fetchedSecondNode = tree.getNode(secondNodeId);
 
-    expect(secondNode.isRoot).toBe(false);
+    expect(fetchedSecondNode.isRoot).toBe(false);
   });
 
   test("A parent node retains references to children. A child node has a reference to its parent.", () => {
     const tree = new Tree(); 
-    const rootNodeId = tree.addNode();
-    const secondNodeId = tree.addNode({ parentId: rootNodeId });
-    const secondNode = tree.getNode(secondNodeId);
-    const rootNode = tree.getNode(rootNodeId);
+    const rootNode = new Node();
+    const secondNode = new Node({
+      parentId: rootNode.id
+    });
 
-    expect(rootNode.children.includes(secondNodeId)).toBe(true);
-    expect(secondNode.parent).toBe(rootNodeId);
+    const rootNodeId = tree.addNode(rootNode);
+    const secondNodeId = tree.addNode(secondNode);
+
+    const fetchedRoot = tree.getNode(rootNodeId);
+    const fetchedSecond = tree.getNode(secondNodeId);
+
+    expect(fetchedRoot.children.includes(secondNodeId)).toBe(true);
+    expect(fetchedSecond.parentId).toBe(rootNodeId);
   });
 
   test("You cannot delete a non-existent node.", () => {
@@ -76,48 +99,68 @@ describe("The Tree", () => {
 
   test("Deleting a node deletes ALL of its children and descendents.", () => {
     const tree = new Tree(); 
-    const rootNodeId = tree.addNode();
-    const secondNodeId = tree.addNode({ parentId: rootNodeId });
-    const thirdNodeId = tree.addNode({ parentId: secondNodeId });
+    const root = new Node();
+    const secondNode = new Node({
+      parentId: root.id,
+    });
+    const thirdNode = new Node({
+      parentId: secondNode.id 
+    });
 
-    tree.deleteNode(rootNodeId);
-    expect(tree.getNode(rootNodeId)).toBeNull();
-    expect(tree.getNode(secondNodeId)).toBeNull();
-    expect(tree.getNode(thirdNodeId)).toBeNull();
+    tree.addNode(root);
+    tree.addNode(secondNode);
+    tree.addNode(thirdNode);
+
+    tree.deleteNode(root.id);
+    expect(tree.getNode(root.id)).toBeNull();
+    expect(tree.getNode(secondNode.id)).toBeNull();
+    expect(tree.getNode(thirdNode.id)).toBeNull();
 
     expect(tree.getNodeCount()).toBe(0);
   });
 
   test("Deleting a node leaves its siblings unaffected.", () => {
     const tree = new Tree(); 
-    const rootNodeId = tree.addNode();
-    const secondNodeId = tree.addNode({ parentId: rootNodeId });
-    const thirdNodeId = tree.addNode({ parentId: secondNodeId });
+    const root = new Node();
+    const secondNode = new Node({
+      parentId: root.id,
+    });
+    const thirdNode = new Node({
+      parentId: secondNode.id 
+    });
+    const sibling = new Node({
+      parentId: root.id
+    });
 
-    const firstSibling = tree.addNode({ parentId: rootNodeId });
-    const firstNephew = tree.addNode({ parentId: firstSibling });
+    const nephew = new Node({
+      parentId: sibling.id 
+    });
 
-    tree.deleteNode(secondNodeId);
+    tree.addNode(root);
+    tree.addNode(secondNode);
+    tree.addNode(thirdNode);
+    tree.addNode(sibling);
+    tree.addNode(nephew);
 
-    expect(tree.getNode(secondNodeId)).toBeNull();
-    expect(tree.getNode(thirdNodeId)).toBeNull();
+    tree.deleteNode(secondNode.id);
 
-    expect(tree.getNode(firstSibling)).not.toBeNull();
-    expect(tree.getNode(firstNephew)).not.toBeNull();
+    expect(tree.getNode(secondNode.id)).toBeNull();
+    expect(tree.getNode(thirdNode.id)).toBeNull();
+
+    expect(tree.getNode(sibling.id)).not.toBeNull();
+    expect(tree.getNode(nephew.id)).not.toBeNull();
   });
 
   test("Data can be passed to a node. The data requires a name, some help text (to contextualize the action for a reader) and some executable code in a main function.", () => {
-    const tree = new Tree(); 
-    const rootNodeId = tree.addNode({ 
+    const rootNode = new Node({
       data: {
         description: "Determines actions on hunger level.", 
         main(context) { 
           console.log("I have been declared.");
         }
       }
-    });
-    
-    const rootNode = tree.getNode(rootNodeId);
+    });    
+
     expect(rootNode).toHaveProperty("data");
     const { data } = rootNode;
     expect(data).toHaveProperty("description");
@@ -127,15 +170,11 @@ describe("The Tree", () => {
 
     // error handling
     expect(() => {
-      tree.addNode({
-        parentId: rootNodeId,
+      new Node({
         data: {
           random: "BS"
         }
-      });
+      }); 
     }).toThrow("INVALID_NODE_DATA");
   });
-
-  // now it's time to talke about traversing the node tree.
-  // this entails taking a CONTEXT passed to the tree and passing it into the tree. 
 });

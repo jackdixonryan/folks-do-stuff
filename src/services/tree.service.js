@@ -1,6 +1,6 @@
 const crypto = require("crypto"); 
 
-module.exports = class Tree {
+class Tree {
   constructor(context = null) {
     this.id = crypto.randomUUID();
     this.nodes = [];
@@ -9,40 +9,25 @@ module.exports = class Tree {
     }
   }
 
-  addNode(options=null) {
-    let node, parentId, data;
-
-    if (options) {
-      if (options.parentId) {
-        parentId = options.parentId;
-      }
-      if (options.data) {
-        data = options.data;
-      }
-    }
-
-    if (this.getNodeCount() === 0) { 
-      node = new Node();
+  addNode(node) {
+    if (this.getNodeCount() === 0) {
+      this.nodes.push(node);
+      return node.id;
     } else {
-      if (parentId) {
-        const parentNode = this.getNode(parentId);
-        if (!parentNode) { 
-          throw new Error("PARENT_NOT_FOUND")
-        } else { 
-          node = new Node({ parentId: parentId });
-          parentNode.addChild(node);
-        }
-      } else {
+      const { parentId } = node;
+      if (!parentId) {
         throw new Error("PARENT_REQUIRED");
+      } else {
+        const parentNode = this.getNode(parentId);
+        if (!parentNode) {
+          throw new Error("PARENT_NOT_FOUND");
+        } else {
+          this.nodes.push(node);
+          parentNode.children.push(node.id);
+          return node.id;
+        }
       }
     }
-
-    if (data) {
-      node.setData(data);
-    }
-
-    this.nodes.push(node);
-    return node.id;
   }
 
   getNodeCount() {
@@ -123,7 +108,13 @@ class Node {
     let parentId; 
 
     if (options) {
-      data = options.data;
+      if (options.data) {
+        if (!options.data.description || !options.data.main || typeof options.data.main !== "function") {
+          throw new Error("INVALID_NODE_DATA");
+        } else {
+          data = options.data;
+        }
+      }
       parentId = options.parentId;
     }
 
@@ -135,10 +126,10 @@ class Node {
     }
 
     if (parentId) {
-      this.parent = parentId;
+      this.parentId = parentId;
       this.isRoot = false;
     } else {
-      this.parent = null;
+      this.parentId = null;
       this.isRoot = true;
     }
     this.children = [];
@@ -162,3 +153,5 @@ class Node {
     return result;
   }
 }
+
+module.exports = { Tree, Node }
