@@ -111,7 +111,7 @@ describe("The Tree", () => {
     const rootNodeId = tree.addNode({ 
       data: {
         description: "Determines actions on hunger level.", 
-        main() { 
+        main(context) { 
           console.log("I have been declared.");
         }
       }

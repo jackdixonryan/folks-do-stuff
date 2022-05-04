@@ -1,9 +1,12 @@
 const crypto = require("crypto"); 
 
 module.exports = class Tree {
-  constructor() {
+  constructor(context = null) {
     this.id = crypto.randomUUID();
     this.nodes = [];
+    if (context) {
+      this.context = context;
+    }
   }
 
   addNode(options=null) {
@@ -68,6 +71,16 @@ module.exports = class Tree {
       throw new Error("NODE_NOT_FOUND");
     }
   }
+
+  executeNode(nodeId) {
+    const node = this.getNode(nodeId);
+    if (!node) {
+      throw new Error("NODE_NOT_FOUND");
+    } else {
+      const result = node.execute(this.context);
+      return result;
+    }
+  }
 }
 
 class Node { 
@@ -109,5 +122,10 @@ class Node {
     } else {
       this.data = data;
     }
+  }
+
+  execute(context) { 
+    const result = this.data.main(context);
+    return result;
   }
 }
