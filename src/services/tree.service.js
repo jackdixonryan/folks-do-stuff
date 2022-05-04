@@ -105,7 +105,6 @@ class Tree {
       throw new Error("NO_EVALUABLE_NODES");
     } else {
       const outcome = this.executeNode(this.getRootNode().id);
-      console.log("SITE B");
       return outcome;
     }
   }

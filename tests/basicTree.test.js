@@ -87,7 +87,35 @@ describe("The bear necessities decision tree", () => {
       hunger: 0, 
       thirst: 0,
     }
-    const result = tree.evaluate({ allNeedsMet });
+    const result = tree.evaluate(allNeedsMet);
     expect(result).toBe("IDLE");
+  });
+
+  test("If hunger is bad, the creature will try to eat.", () => {
+    const hungry = {
+      hunger: 1000,
+      thirst: 0,
+    }
+    const result = tree.evaluate(hungry);
+    expect(result).toBe("EAT_SOMETHING");
+  });
+
+  test("If the animal is hungry AND thirsty, it will try to eat first.", () => {
+    const both = { 
+      hunger: 1000,
+      thirst: 1000,
+    }
+    const result = tree.evaluate(both);
+    expect(result).toBe("EAT_SOMETHING");
+  });
+
+  test("If the animal is only thirsty, it will try to drink something.", () => {
+    const thirsty = {
+      hunger: 1, 
+      thirst: 10000
+    }
+
+    const result = tree.evaluate(thirsty);
+    expect(result).toBe("DRINK_SOMETHING");
   });
 });
