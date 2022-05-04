@@ -77,8 +77,41 @@ module.exports = class Tree {
     if (!node) {
       throw new Error("NODE_NOT_FOUND");
     } else {
-      const result = node.execute(this.context);
-      return result;
+      // this is pretty sloppy fyi
+      const result = node.execute(this.context); // where result is either a younger process ID or a result.
+      const children = node.children; 
+      if (children.length > 0) {
+         if (!children.includes(result)) { 
+            throw new Error("INVALID_TERMINAL_NODE");
+         } else {
+            const childNode = this.getNode(result);
+            childNode.execute(this.context);
+         }
+      } else {
+        return result;
+      }
+    }
+  }
+
+  getRootNode() {
+    if (this.getNodeCount() === 0) {
+      throw new Error("NO_EVALUABLE_NODES");
+    } else {
+      const rootNode = this.nodes.find((node) => node.isRoot === true);
+      return rootNode;
+    }
+  }
+
+  getAllNodes() {
+    return this.nodes;
+  }
+
+  evaluate() {
+    if (this.getNodeCount() === 0) {
+      throw new Error("NO_EVALUABLE_NODES");
+    } else {
+      const outcome = this.executeNode(this.getRootNode().id);
+      return outcome;
     }
   }
 }
