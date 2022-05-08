@@ -163,6 +163,8 @@ class Node {
   }
 
   execute(context) { 
+    // we must change this bit here - get rid of the main function
+    // and sub in an evaluator that can run on data. 
     const { nextNodeId, result } = this.data.main(context);
     if (!nextNodeId && !result) { 
       throw new Error("INVALID_NODE_RETURN_VALUES");

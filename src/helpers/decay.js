@@ -20,7 +20,7 @@ module.exports = class Decay {
       // all of this lets us calculate how much loss the value property
       // should have incurred between it's declaration and now. 
       const amountOfDecay = this.decayPerSecond * inSeconds;
-      const newValue = this.value - amountOfDecay; 
+      let newValue = this.value - amountOfDecay; 
       // decays should not be able to fall lower than 0. 
       if (newValue < 0) {
         newValue = 0;
@@ -38,6 +38,7 @@ module.exports = class Decay {
 
   // this effectively causes the "decay" to end
   stop() {
+    this.getValue();
     this.startTime = null;
   }
 
