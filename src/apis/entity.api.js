@@ -12,6 +12,8 @@ module.exports = entityApi = (function () {
   const port = 2000;
   entityApp.use(express.json()); 
 
+  entityApp.get("/ping", (req, res, next) => res.status(200).send({ message: "pong" }));
+
   return {
     start() {
       entityApp.listen(port, () => {

@@ -50,29 +50,29 @@ describe("The Most basic possible for of an entity.", () => {
     }, 4000));
   });
 
-  test("An entity must have a decision tree.", () => {
-    const entity = new Entity({
-      name: "Myknossos",
-      description: "The first of his kind! A true Myknossian.",
-      needs: {
-        hunger: new Decay({ startingValue: 100, decayPerSecond: 1})
-      }
-    }); 
+  // test("An entity must have a decision tree.", () => {
+  //   const entity = new Entity({
+  //     name: "Myknossos",
+  //     description: "The first of his kind! A true Myknossian.",
+  //     needs: {
+  //       hunger: new Decay({ startingValue: 100, decayPerSecond: 1})
+  //     }
+  //   }); 
 
-    expect(entity).toHaveProperty("decisionTree");
-  });
+  //   expect(entity).toHaveProperty("decisionTree");
+  // });
 
-  test("An entity can query its own needs.", () => {
-    const entity = new Entity({
-      name: "Myknossos",
-      description: "The first of his kind! A true Myknossian.",
-      needs: {
-        hunger: new Decay({ startingValue: 100, decayPerSecond: 1})
-      }
-    }); 
+  // test("An entity can query its own needs.", () => {
+  //   const entity = new Entity({
+  //     name: "Myknossos",
+  //     description: "The first of his kind! A true Myknossian.",
+  //     needs: {
+  //       hunger: new Decay({ startingValue: 100, decayPerSecond: 1})
+  //     }
+  //   }); 
     
-    expect(entity.queryNeeds).not.toBeUndefined();
-    expect(entity.queryNeeds()).toHaveProperty("hunger");
+  //   expect(entity.queryNeeds).not.toBeUndefined();
+  //   expect(entity.queryNeeds()).toHaveProperty("hunger");
 
-  });
+  // });
 });

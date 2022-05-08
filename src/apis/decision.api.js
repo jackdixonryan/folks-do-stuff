@@ -8,7 +8,7 @@ module.exports = decisionApi = (function () {
   const port = 3000;
   decisionApp.use(express.json()); 
 
-  decisionApp.get("ping", (req, res, next) => res.status(200).send({ message: "pong" }));
+  decisionApp.get("/ping", (req, res, next) => res.status(200).send({ message: "pong" }));
 
   return {
     start() { 
