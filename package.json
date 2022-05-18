@@ -20,7 +20,8 @@
   "homepage": "https://github.com/jackdixonryan/folks-do-stuff#readme",
   "devDependencies": {
     "istanbul-badges-readme": "^1.8.1",
-    "jest": "^28.0.3"
+    "jest": "^28.0.3",
+    "supertest": "^6.2.3"
   },
   "dependencies": {
     "express": "^4.18.1",
