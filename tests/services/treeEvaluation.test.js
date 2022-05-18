@@ -1,4 +1,4 @@
-const { Tree, Node } = require("../../src/services/tree.service");
+const { Tree, Node } = require("../../src/services/game/tree.service");
 
 describe("The Evaluation of Executable Trees", () => {
 

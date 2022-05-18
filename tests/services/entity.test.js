@@ -1,5 +1,5 @@
 const Decay = require("../../src/helpers/decay");
-const Entity = require("../../src/services/entity.service");
+const Entity = require("../../src/services/game/entity.service");
 
 describe("The Most basic possible for of an entity.", () => {
 

@@ -1,6 +1,6 @@
 // Here is what we call an all-up test. The units are all passing. Everything _appears_ to be correct.
 // but there's no way to know without taking a little leap. So, here we go. 
-const { Tree, Node } = require("../../src/services/tree.service");
+const { Tree, Node } = require("../../src/services/game/tree.service");
 describe("The bare necessities decision tree", () => {
 
   let tree;
