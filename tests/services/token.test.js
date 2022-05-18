@@ -1,4 +1,4 @@
-const tokenService = require("../../src/services/token.service"); 
+const tokenService = require("../../src/services/api/token.service"); 
 
 describe("The authentication token module", () => {
   test("It requires a data input. This data input is only clientId and clientSecret.", () => {
