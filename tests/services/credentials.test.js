@@ -1,5 +1,5 @@
-const credentialService = require("../src/services/credentials.service");
-const tokenService = require("../src/services/token.service");
+const credentialService = require("../../src/services/credentials.service");
+const tokenService = require("../../src/services/token.service");
 
 describe("The credentials service", () => {
   test("It can generate a client ID and a client secret for a new user.", () => {
