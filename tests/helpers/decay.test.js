@@ -1,4 +1,4 @@
-const Decay = require("../src/helpers/decay");
+const Decay = require("../../src/helpers/decay");
 
 describe("The Decay Type Variable", () => { 
   test("The Decay can be declared with a max value and a decay-per-second rate.", () => {
